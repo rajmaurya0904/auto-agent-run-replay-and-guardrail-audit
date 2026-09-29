@@ -50,3 +50,33 @@ def test_render_timeline_kind_specific_summaries() -> None:
 
 def test_render_timeline_empty_list() -> None:
     assert render_timeline([]) == ""
+
+
+def test_render_timeline_sorts_out_of_order_events() -> None:
+    """Out-of-order input events are rendered in chronological order."""
+    unsorted_events = [
+        ShellCommandEvent(
+            timestamp="2026-01-01T00:00:02Z",
+            actor="agent-1",
+            command="ls -la",
+            cwd="/tmp",
+        ),
+        FileEditEvent(
+            timestamp="2026-01-01T00:00:00Z",
+            actor="agent-1",
+            path="/tmp/first.py",
+            diff="-old\n+new",
+        ),
+        NetworkCallEvent(
+            timestamp="2026-01-01T00:00:01Z",
+            actor="agent-1",
+            host="https://api.example.com",
+            method="POST",
+        ),
+    ]
+    output = render_timeline(unsorted_events)
+    lines = output.split("\n")
+    assert len(lines) == 3
+    assert lines[0].startswith("2026-01-01T00:00:00Z")
+    assert lines[1].startswith("2026-01-01T00:00:01Z")
+    assert lines[2].startswith("2026-01-01T00:00:02Z")

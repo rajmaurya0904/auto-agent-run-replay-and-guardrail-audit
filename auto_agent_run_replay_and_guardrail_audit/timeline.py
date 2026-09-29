@@ -34,12 +34,13 @@ def _summarize(event: Event) -> str:
 def render_timeline(events: list[Event]) -> str:
     """Format events chronologically as a human-readable timeline.
 
-    Events are assumed to already be in chronological order (as returned by
-    `load_session`). Each line shows the event's timestamp, kind, and a
-    short kind-specific summary, e.g. `2026-01-01T00:00:00Z WRITE foo.py`.
+    Events are sorted by timestamp. Each line shows the event's timestamp,
+    kind, and a short kind-specific summary, e.g.
+    `2026-01-01T00:00:00Z WRITE foo.py`.
     """
+    sorted_events = sorted(events, key=lambda e: e.timestamp)
     lines = [
         f"{event.timestamp} {_KIND_LABELS[event.type]} {_summarize(event)}"
-        for event in events
+        for event in sorted_events
     ]
     return "\n".join(lines)
