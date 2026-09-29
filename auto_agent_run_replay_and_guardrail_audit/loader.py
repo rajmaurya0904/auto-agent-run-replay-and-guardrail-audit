@@ -13,12 +13,22 @@ def load_session(path: str | PathLike[str]) -> list[Event]:
 
     Blank lines are skipped. Each non-blank line is parsed as a JSON object
     and dispatched to the appropriate Event subclass via `parse_event`.
+    Raises ValueError if a JSON line is malformed, including the line number.
     """
     events: list[Event] = []
     with open(path, encoding="utf-8") as f:
-        for line in f:
+        for line_number, line in enumerate(f, start=1):
             stripped = line.strip()
             if not stripped:
                 continue
-            events.append(parse_event(json.loads(stripped)))
+            try:
+                data = json.loads(stripped)
+            except json.JSONDecodeError as e:
+                raise ValueError(
+                    f"malformed JSON on line {line_number}: {e}"
+                ) from e
+            try:
+                events.append(parse_event(data))
+            except ValueError as e:
+                raise ValueError(f"invalid event on line {line_number}: {e}") from e
     return events
