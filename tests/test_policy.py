@@ -46,3 +46,27 @@ def test_load_policy_minimal_file_uses_defaults(tmp_path: Path) -> None:
         allowed_network_hosts=[],
         allowed_shell_prefixes=[],
     )
+
+
+def test_load_policy_wrong_type_list_field_raises(tmp_path: Path) -> None:
+    policy_file = tmp_path / "policy.yaml"
+    policy_file.write_text("allowed_shell_prefixes: 'git'\n")
+
+    with pytest.raises(ValueError, match="allowed_shell_prefixes"):
+        load_policy(policy_file)
+
+
+def test_load_policy_non_mapping_file_raises(tmp_path: Path) -> None:
+    policy_file = tmp_path / "policy.yaml"
+    policy_file.write_text("- not\n- a\n- mapping\n")
+
+    with pytest.raises(ValueError, match="top-level mapping"):
+        load_policy(policy_file)
+
+
+def test_load_policy_unsupported_extension_raises(tmp_path: Path) -> None:
+    policy_file = tmp_path / "policy.json"
+    policy_file.write_text("{}\n")
+
+    with pytest.raises(ValueError, match="unsupported policy file extension"):
+        load_policy(policy_file)
