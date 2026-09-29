@@ -1,0 +1,4 @@
+allowed_write_prefixes: ['./']
+deny_network: false
+allowed_network_hosts: ['api.example.com']
+allowed_shell_prefixes: ['git']

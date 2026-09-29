@@ -3,8 +3,9 @@ import sys
 from pathlib import Path
 
 FIXTURE = Path(__file__).parent / "fixtures" / "session.jsonl"
-EXAMPLE_SESSION = Path(__file__).parent.parent / "examples" / "session.jsonl"
-EXAMPLE_POLICY = Path(__file__).parent.parent / "examples" / "policy.yaml"
+CLEAN_POLICY = Path(__file__).parent / "fixtures" / "policy_clean.yaml"
+VIOLATIONS_FIXTURE = Path(__file__).parent / "fixtures" / "session_violations.jsonl"
+VIOLATIONS_POLICY = Path(__file__).parent / "fixtures" / "policy_violations.yaml"
 
 
 def _run(*args: str) -> subprocess.CompletedProcess[str]:
@@ -16,22 +17,15 @@ def _run(*args: str) -> subprocess.CompletedProcess[str]:
 
 
 def test_audit_reports_violations_and_exits_nonzero() -> None:
-    result = _run("audit", str(EXAMPLE_SESSION), "--policy", str(EXAMPLE_POLICY))
+    result = _run("audit", str(VIOLATIONS_FIXTURE), "--policy", str(VIOLATIONS_POLICY))
 
     assert result.returncode == 1
     assert "write-outside-repo" in result.stdout
     assert "network-call-denied" in result.stdout
 
 
-def test_audit_clean_session_exits_zero(tmp_path: Path) -> None:
-    policy_file = tmp_path / "policy.yaml"
-    policy_file.write_text(
-        "allowed_shell_prefixes: ['ls']\n"
-        "deny_network: false\n"
-        "allowed_network_hosts: ['api.example.com']\n"
-    )
-
-    result = _run("audit", str(FIXTURE), "--policy", str(policy_file))
+def test_audit_clean_session_exits_zero() -> None:
+    result = _run("audit", str(FIXTURE), "--policy", str(CLEAN_POLICY))
 
     assert result.returncode == 0
     assert "no violations" in result.stdout.lower()

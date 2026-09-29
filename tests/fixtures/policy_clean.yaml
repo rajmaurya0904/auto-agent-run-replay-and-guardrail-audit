@@ -1,0 +1,3 @@
+allowed_shell_prefixes: ['ls']
+deny_network: false
+allowed_network_hosts: ['api.example.com']

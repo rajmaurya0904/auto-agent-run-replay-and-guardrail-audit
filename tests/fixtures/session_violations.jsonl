@@ -1,0 +1,3 @@
+{"type": "tool_call", "timestamp": "2026-01-01T00:00:00Z", "actor": "agent-1", "tool_name": "Read", "arguments": {"path": "foo.py"}}
+{"type": "file_edit", "timestamp": "2026-01-01T00:00:01Z", "actor": "agent-1", "path": "/etc/passwd", "diff": "-old\n+new"}
+{"type": "network_call", "timestamp": "2026-01-01T00:00:02Z", "actor": "agent-1", "host": "evil.example.com", "method": "GET"}
