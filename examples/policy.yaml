@@ -1,0 +1,10 @@
+# Guardrail policy: only allow writes inside the repo, deny all outbound
+# network calls, and restrict shell commands to a small safe allowlist.
+allowed_write_prefixes:
+  - .
+deny_network: true
+allowed_network_hosts: []
+allowed_shell_prefixes:
+  - git
+  - pytest
+  - ruff

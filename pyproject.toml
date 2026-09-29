@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Replays recorded agent sessions (tool calls, shell commands, file edits) as a readable timeline and flags actions outside a configurable policy, such as writes outside the repo or network calls. For teams that want an audit trail without a full runtime."
 requires-python = ">=3.11"
 license = { text = "MIT" }
-dependencies = []
+dependencies = ["pyyaml>=6.0"]
 
 [project.optional-dependencies]
 dev = [
