@@ -31,6 +31,11 @@ def _summarize(event: Event) -> str:
     raise TypeError(f"unsupported event type: {type(event).__name__}")
 
 
+def describe_event(event: Event) -> str:
+    """Return a short, kind-specific description of an event, e.g. `WRITE foo.py`."""
+    return f"{_KIND_LABELS[event.type]} {_summarize(event)}"
+
+
 def render_timeline(events: list[Event]) -> str:
     """Format events chronologically as a human-readable timeline.
 
@@ -39,8 +44,5 @@ def render_timeline(events: list[Event]) -> str:
     `2026-01-01T00:00:00Z WRITE foo.py`.
     """
     sorted_events = sorted(events, key=lambda e: e.timestamp)
-    lines = [
-        f"{event.timestamp} {_KIND_LABELS[event.type]} {_summarize(event)}"
-        for event in sorted_events
-    ]
+    lines = [f"{event.timestamp} {describe_event(event)}" for event in sorted_events]
     return "\n".join(lines)
